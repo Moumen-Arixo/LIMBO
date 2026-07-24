@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMBO: INSIDE THE MACHINE</title>
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+<body>
+    <!-- واجهة اللعبة السينمائية -->
+    <div id="game-container">
+        <!-- شاشة البدء السينمائية -->
+        <div id="start-screen" class="overlay active">
+            <div class="vignette"></div>
+            <div class="menu-content">
+                <h1 class="glitch-text" data-text="LIMBO">LIMBO</h1>
+                <h2 class="subtitle">INSIDE THE MACHINE</h2>
+                <p class="blink">اضغط على أي مفتاح لبدء رحلة الهروب المظلمة...</p>
+                <div class="controls-guide">
+                    <p>🎮 <strong>التحكم باللعب:</strong></p>
+                    <p>الحركة: <strong>A / D</strong> أو <strong>الأسهم الجانبية</strong></p>
+                    <p>القفز / التسلق: <strong>W / Space</strong> أو <strong>السهم لأعلى</strong></p>
+                    <p>الانحناء / النزول / السباحة: <strong>S</strong> أو <strong>السهم لأسفل</strong></p>
+                    <p>سحب/دفع الصناديق والتفاعل: <strong>مفتاح Shift (اليسار)</strong> أو <strong>E</strong> (استمر بالضغط أثناء الحركة)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- شاشة الموت السينمائية -->
+        <div id="gameover-screen" class="overlay">
+            <div class="menu-content">
+                <h2 class="death-title">لقد تم الإمساك بك...</h2>
+                <p class="blink">اضغط على مفتاح <strong>R</strong> لإعادة المحاولة من آخر نقطة حفظ</p>
+            </div>
+        </div>
+
+        <!-- أشرطة سينمائية (Cinematic Black Bars) -->
+        <div class="cinematic-bar top"></div>
+        <div class="cinematic-bar bottom"></div>
+
+        <!-- اللوحة الرسومية الأساسية للعبة -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- تأثير تشويش عدسة الكاميرا (CRT Scanlines & Grain) -->
+        <div class="crt-overlay"></div>
+    </div>
+
+    <!-- استيراد وحدات اللعبة البرمجية بالترتيب الصحيح للتناغم -->
+    <script src="JS/audio/SoundSynth.js"></script>
+    <script src="JS/engine/Camera.js"></script>
+    <script src="JS/engine/Physics.js"></script>
+    <script src="JS/entities/Player.js"></script>
+    <script src="JS/entities/Elements.js"></script>
+    <script src="JS/levels/LevelData.js"></script>
+    <script src="JS/main.js"></script>
+</body>
+</html>

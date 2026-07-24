@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+    --bg-color: #0b0c10;
+    --text-color: #c5c6c7;
+    --red-alert: #e50914;
+    --shadow-color: rgba(0, 0, 0, 0.85);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Courier Prime', 'Cairo', monospace;
+    overflow: hidden;
+}
+
+/* حاوية اللعبة */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+/* شاشة اللعبة */
+#gameCanvas {
+    display: block;
+    background-color: #050608;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+}
+
+/* الأشرطة السينمائية */
+.cinematic-bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 8vh;
+    background-color: #000;
+    z-index: 10;
+    pointer-events: none;
+}
+.cinematic-bar.top {
+    top: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.cinematic-bar.bottom {
+    bottom: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* تأثير التظليل الخارجي (Vignette) وتأثير الشاشة القديمة */
+.vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 30%, rgba(0, 0, 0, 0.9) 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.crt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.45;
+}
+
+/* الواجهات المتراكبة (Overlays) */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(3, 4, 6, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 1.5s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.menu-content {
+    text-align: center;
+    padding: 20px;
+    max-width: 600px;
+    z-index: 10;
+}
+
+h1.glitch-text {
+    font-size: 5rem;
+    font-weight: 700;
+    letter-spacing: 12px;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #4f5d75;
+    letter-spacing: 4px;
+    margin-bottom: 40px;
+    font-weight: 400;
+}
+
+.death-title {
+    font-size: 2.5rem;
+    color: var(--red-alert);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    font-weight: 400;
+    animation: pulse 2s infinite;
+}
+
+.blink {
+    font-size: 1rem;
+    color: #8d99ae;
+    letter-spacing: 1px;
+    animation: blink 2s infinite;
+    margin-bottom: 30px;
+}
+
+.controls-guide {
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 4px;
+    text-align: right;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    line-height: 1.8;
+}
+
+.controls-guide p {
+    margin-bottom: 8px;
+}
+
+.controls-guide strong {
+    color: #fff;
+}
+
+/* الحركات (Animations) */
+@keyframes blink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.02); opacity: 1; }
+}
