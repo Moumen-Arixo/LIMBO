@@ -29,6 +29,12 @@
 
     <div id="toast" class="toast is-hidden" role="status"></div>
 
+    <aside id="dialogue" class="dialogue is-hidden" aria-live="polite" aria-atomic="true">
+      <span id="dialogue-speaker" class="dialogue-speaker">نورا</span>
+      <p id="dialogue-copy"></p>
+      <span class="dialogue-spark">✦</span>
+    </aside>
+
     <section id="title-screen" class="screen title-screen">
       <div class="title-mist mist-a"></div><div class="title-mist mist-b"></div>
       <div class="title-content panelless">
@@ -39,6 +45,7 @@
         <div class="title-buttons">
           <button id="start-btn" class="button primary" type="button">ابدأ الرحلة <span>←</span></button>
           <button id="map-btn" class="button ghost" type="button">خريطة الحملة</button>
+          <button id="settings-btn" class="button subtle" type="button">الإتاحة والإعدادات</button>
         </div>
         <p class="control-summary">تحرّك <b>← →</b> أو <b>A D</b> &nbsp; · &nbsp; اقفز <b>Space</b> &nbsp; · &nbsp; تفاعل <b>E</b></p>
       </div>
@@ -54,6 +61,23 @@
         <p class="map-intro">كل عقدة هي رحلة مستقلة فيها مرسى وحل لغز وبذور ضوء. أكملي الفصول لفتح المسار التالي.</p>
         <div id="chapter-map" class="chapter-map" role="list" aria-label="فصول الحملة"></div>
         <footer class="map-footer"><span id="progress-label">0 من 25 فصل مكتمل</span><button id="reset-save-btn" class="text-button" type="button">إعادة ضبط الحفظ</button></footer>
+      </div>
+    </section>
+
+    <section id="settings-screen" class="screen is-hidden" aria-label="الإتاحة والإعدادات">
+      <div class="panel settings-panel">
+        <header class="screen-header">
+          <div><p class="eyebrow">اضبطي الرحلة كما يناسبك</p><h2>الإتاحة والإعدادات</h2></div>
+          <button class="icon-btn close-settings" type="button" aria-label="إغلاق">×</button>
+        </header>
+        <p class="map-intro">كل الخيارات تحفظ محلياً في متصفحك. لا يغيّر أي خيار القصة أو يمنع إكمال الحملة.</p>
+        <div class="settings-list">
+          <button class="setting-row" data-setting="guidance" type="button"><span><b>إرشادات التفاعل</b><small>إظهار زر E والتلميحات القصيرة قرب عناصر اللغز.</small></span><i class="setting-state" data-setting-state="guidance"></i></button>
+          <button class="setting-row" data-setting="gentle" type="button"><span><b>رحلة هادئة</b><small>المخاطر تعيدك خطوة للخلف بدلاً من فقدان التقدم.</small></span><i class="setting-state" data-setting-state="gentle"></i></button>
+          <button class="setting-row" data-setting="reducedMotion" type="button"><span><b>حركة أقل</b><small>تخفيف تمايل الكاميرا والجسيمات والانتقالات.</small></span><i class="setting-state" data-setting-state="reducedMotion"></i></button>
+          <button class="setting-row" data-setting="highContrast" type="button"><span><b>تباين أعلى</b><small>تقوية حدود المنصات والعناصر التفاعلية.</small></span><i class="setting-state" data-setting-state="highContrast"></i></button>
+        </div>
+        <div class="settings-actions"><button id="settings-sound-btn" class="button ghost" type="button">تبديل الصوت</button><button class="button primary close-settings" type="button">تم</button></div>
       </div>
     </section>
 

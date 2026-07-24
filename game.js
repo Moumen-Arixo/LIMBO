@@ -14,10 +14,11 @@
     hud: $('hud'), hudAct: $('hud-act'), hudChapter: $('hud-chapter'), hudObjective: $('hud-objective'),
     seedCount: $('seed-count'), seedTotal: $('seed-total'), hint: $('interaction-hint'), toast: $('toast'),
     title: $('title-screen'), map: $('map-screen'), pause: $('pause-screen'), intro: $('chapter-card-screen'),
-    ending: $('ending-screen'), credits: $('credits-screen'), touch: $('touch-controls'),
+    ending: $('ending-screen'), credits: $('credits-screen'), settings: $('settings-screen'), touch: $('touch-controls'),
     mapList: $('chapter-map'), progress: $('progress-label'), sound: $('sound-btn'),
     introAct: $('intro-act'), introTitle: $('intro-title'), introCopy: $('intro-copy'),
-    endingTitle: $('ending-title'), endingCopy: $('ending-copy')
+    endingTitle: $('ending-title'), endingCopy: $('ending-copy'),
+    dialogue: $('dialogue'), dialogueSpeaker: $('dialogue-speaker'), dialogueCopy: $('dialogue-copy')
   };
 
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -67,17 +68,50 @@
     { act: 5, actName: 'الفصل الخامس · بحر الشفق', name: 'فجران', biome: 'observatory', biomeName: 'المرصد', type: 'resonance', objective: 'افتحي بوابة المرصد واخترِي مصير الضوء.', intro: 'تنتظر نورا وسيل بين منارتين؛ لكل منهما فجر ممكن.' }
   ];
 
+  const STORY_BEATS = [
+    ['يسمع الفانوس اسماً قديماً تحت السرخس.', 'أول ضوء لا يحتاج إلى وعد؛ يحتاج فقط إلى خطوة.'],
+    ['تحت كل درجة مكسورة تنمو جذور تتجه إلى الأعلى.', 'حتى الطريق المتصدع يعرف أين يريد أن يصل.'],
+    ['تلمع البتلات عند نغمة لا يسمعها إلا من يقترب.', 'المفتاح لا يفتح خشباً فقط؛ يفتح ذكرى.'],
+    ['صندوق صغير يردد صوت قطرات لم تسقط بعد.', 'للأشياء الثقيلة طريقٌ حين نحملها برفق.'],
+    ['تدور التروس تحت اللحاء كأن الغابة تتنفس.', 'الجسر لم يختفِ؛ كان يصغي إلى الرافعة.'],
+    ['تنعكس ساعة نحاسية في ماء لا يتحرك.', 'كل مرسى يطلب منكِ أن تتنفسي قبل القفزة.'],
+    ['المدّ ينام خلف صمام صدئ.', 'دورة واحدة من اليد تغيّر اتجاه النهر.'],
+    ['يعود صوتان زجاجيان من ضفتين مختلفتين.', 'حين يتفق الرنين، لا يبقى باب وحيداً.'],
+    ['الصندوق يعرف القناة أكثر مما يعرفها الناس.', 'الصدى يحمل أشياءً لا تستطيع اليد حملها وحدها.'],
+    ['تترك سيل ثلاثة أحرف على عجلة الطاحونة: لا تخافي.', 'القلب النحاسي يدور؛ والرسالة تستمر.'],
+    ['تهبط ريشة مضيئة قرب كتف نورا ثم لا تسقط.', 'الهواء يفتح الطريق الثاني لمن يصغي إليه.'],
+    ['تطفو الحدائق لحظةً ثم تعود إلى أماكنها.', 'ليست كل المسارات على الأرض.'],
+    ['يتحرك الظل قرب البلورات لكنه لا يقترب من الفانوس.', 'ربما كان الظل ضوءاً تأخر عن العودة.'],
+    ['مرآة الماء لا تعكس نورا وحدها.', 'في الوجه الآخر، تقول سيل: تابعي.'],
+    ['تدق الشرفة مرة واحدة ثم تنتظر الرنين.', 'الثبات ليس أن تبقي؛ بل أن تختاري العودة.'],
+    ['تفتح المدينة نوافذها بلا وجوه خلفها.', 'كل نافذة تحفظ صوتاً، ولو لم يبق صاحبها.'],
+    ['الرايات تعرف لحن الريح قبل أن تسمعه نورا.', 'الحركة الصحيحة قد تكون أهدأ حركة.'],
+    ['قطار البذور يمر فوق الساحات كأنه حديقة تسافر.', 'لا يحتاج المنزل إلى جدار كي يبقى بيتاً.'],
+    ['تتشبث الحديقة المعلقة بجذر واحد من الضوء.', 'ما تحفظينه اليوم يصير جسراً لغدٍ آخر.'],
+    ['تصل رسالة سيل كاملة: المرصد يرى الفجرين.', 'الصمت لا يعني الغياب؛ أحياناً يعني الإنصات.'],
+    ['تلمع الجزر في الشاطئ ثم تذوب في انعكاسها.', 'البحر لا يعيد الوجه نفسه مرتين.'],
+    ['ينادي حوت زجاجي من تحت الماء بنغمة طويلة.', 'اتبعي الصوت الذي لا يطلب منكِ أن تتسرعي.'],
+    ['يصعد المدّ إلى السماء ثم يعود في خيط أزرق.', 'كل ما يبتعد يمكن أن يجد طريق الرجوع.'],
+    ['تتجه عدسات المرصد إلى نافذة من غيوم رقيقة.', 'الظل يقف بجانب نورا، لا خلفها.'],
+    ['بين منارتين، تنتظر سيل بفانوس يحمل اللونين.', 'ليس للفجر شكل واحد؛ اختاري ما يبقى منه.']
+  ];
+
   const SAVE_KEY = 'dawnbound-save-v1';
-  const freshSave = () => ({ unlocked: 0, lastChapter: 0, completed: [], totalSeeds: 0, chapterSeedBest: {}, muted: false, ending: null });
+  const DEFAULT_SETTINGS = { guidance: true, gentle: false, reducedMotion: false, highContrast: false };
+  const freshSave = () => ({ unlocked: 0, lastChapter: 0, completed: [], totalSeeds: 0, chapterSeedBest: {}, muted: false, ending: null, settings: { ...DEFAULT_SETTINGS } });
   function loadSave() {
     try {
       const raw = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!raw || typeof raw !== 'object') return freshSave();
-      return { ...freshSave(), ...raw, completed: Array.isArray(raw.completed) ? raw.completed : [], chapterSeedBest: raw.chapterSeedBest || {} };
+      return { ...freshSave(), ...raw, settings: { ...DEFAULT_SETTINGS, ...(raw.settings || {}) }, completed: Array.isArray(raw.completed) ? raw.completed : [], chapterSeedBest: raw.chapterSeedBest || {} };
     } catch (_) { return freshSave(); }
   }
   let save = loadSave();
   function persist() { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); }
+  function applySettings() {
+    document.body.classList.toggle('high-contrast', !!save.settings.highContrast);
+    document.body.classList.toggle('reduced-motion', !!save.settings.reducedMotion);
+  }
 
   /* أصوات بسيطة محلية: لا ملفات صوتية خارجية ولا تشغيل قبل ضغط اللاعب. */
   class Soundscape {
@@ -116,6 +150,7 @@
     jump() { this.tone(300, .12, 'triangle', .11, 155); }
     seed() { this.tone(620, .1, 'sine', .13, 210); setTimeout(() => this.tone(880, .14, 'sine', .09, 180), 55); }
     key() { this.tone(430, .12, 'triangle', .15, 210); setTimeout(() => this.tone(720, .2, 'sine', .1, 170), 75); }
+    rune(step = 0) { this.tone(340 + step * 105, .16, 'sine', .11, 145); setTimeout(() => this.tone(515 + step * 110, .18, 'triangle', .07, 95), 70); }
     lever() { this.tone(160, .18, 'square', .09, -45); setTimeout(() => this.tone(260, .22, 'triangle', .1, 90), 65); }
     door() { this.tone(220, .32, 'sine', .12, 160); }
     danger() { this.tone(120, .22, 'sawtooth', .08, -45); }
@@ -138,7 +173,7 @@
 
   const game = {
     level: null, player: null, camera: { x: 0 }, time: 0, running: false, paused: false,
-    transitioning: false, introTimer: null, toastTimer: null, mapReturn: 'title', flash: 0, lastTime: 0
+    transitioning: false, introTimer: null, toastTimer: null, dialogueTimer: null, mapReturn: 'title', settingsReturn: 'title', flash: 0, lastTime: 0
   };
 
   function makePlayer(chapterIndex) {
@@ -149,13 +184,14 @@
   function addPlatform(level, x, y, w, h, kind = 'stone') { level.platforms.push(rect(x, y, w, h, { kind })); }
   function addSeed(level, x, y, note) { level.seeds.push({ x, y, w: 22, h: 28, collected: false, note }); }
   function addKey(level, x, y) { level.keys.push({ x, y, w: 23, h: 32, collected: false }); }
+  function addRune(level, x, y, order, symbol) { level.runes.push({ x, y, w: 38, h: 52, order, symbol, active: false, kind: 'rune' }); }
 
   function buildLevel(index) {
     const chapter = CHAPTERS[index];
     const flat = chapter.type === 'weight';
     const level = {
-      index, chapter, width: 4880, floor: 620, platforms: [], bridges: [], moving: [], hazards: [], seeds: [], keys: [], crates: [], plates: [], levers: [], gates: [], anchors: [], fog: null,
-      goal: rect(4670, 505, 60, 110), checkpoint: { x: 118, y: 440 }, seedMessageShown: false, doorWasOpen: false
+      index, chapter, width: 4880, floor: 620, platforms: [], bridges: [], moving: [], hazards: [], seeds: [], keys: [], runes: [], runeProgress: 0, crates: [], plates: [], levers: [], gates: [], anchors: [], fog: null,
+      goal: rect(4670, 505, 60, 110), checkpoint: { x: 118, y: 440 }, seedMessageShown: false, memoryShown: false, storyEvents: [false, false], doorWasOpen: false
     };
 
     if (flat) {
@@ -210,6 +246,10 @@
       addKey(level, 1580, 554);
       addKey(level, 3170, 554);
       addPlatform(level, 3020, 520, 145, 20, 'ledge');
+      // كل فصل رنين يضيف تسلسلاً مرئياً من ثلاث بلورات؛ الترتيب واضح ولا يعاقب المحاولة.
+      const orders = [[1, 2, 0], [2, 0, 1], [0, 2, 1]][index % 3];
+      const symbols = ['◒', '◇', '⌁'];
+      [3710, 3920, 4110].forEach((x, slot) => addRune(level, x, 552, orders[slot], symbols[slot]));
     } else if (chapter.type === 'weight') {
       level.crates.push({ x: 1820, y: 568, w: 46, h: 52, vx: 0, vy: 0, grounded: false, carried: false, kind: 'crate' });
       level.plates.push(rect(3540, 601, 124, 16, { active: false, kind: 'plate' }));
@@ -275,7 +315,8 @@
   function updatePuzzle(level) {
     const type = level.chapter.type;
     let unlocked = type === 'spark';
-    if (type === 'key' || type === 'resonance') unlocked = level.keys.length > 0 && level.keys.every((key) => key.collected);
+    if (type === 'key') unlocked = level.keys.length > 0 && level.keys.every((key) => key.collected);
+    if (type === 'resonance') unlocked = level.keys.length > 0 && level.keys.every((key) => key.collected) && level.runes.length > 0 && level.runes.every((rune) => rune.active);
     if (type === 'weight') {
       const plate = level.plates[0];
       const pressure = [game.player, ...level.crates].some((thing) => thing && overlap(thing, plate));
@@ -290,7 +331,10 @@
       const changed = gate.open !== unlocked;
       gate.open = unlocked;
       gate.amount = clamp(gate.amount + (gate.open ? .04 : -.04), 0, 1);
-      if (changed && gate.open) { audio.door(); showToast('استجاب الباب للرنين الكهرماني.'); }
+      if (changed && gate.open) {
+        audio.door(); showToast('استجاب الباب للرنين الكهرماني.');
+        showDialogue('الفانوس', 'يصبح الطريق أوضح حين تكتمل العقدة، لا حين تختفي الصعوبات.');
+      }
     }
   }
 
@@ -301,6 +345,20 @@
       const box = p.carrying;
       box.carried = false; box.x = p.x + p.facing * 39; box.y = p.y + 11; box.vx = p.facing * 90; box.vy = -35;
       p.carrying = null; audio.lever(); return;
+    }
+    const rune = level.runes.find((item) => distance(p, item) < 82);
+    if (rune) {
+      if (!level.keys.every((key) => key.collected)) { showToast('البلورة صامتة؛ ابحثي عن المفتاحين الزجاجيين أولاً.'); return; }
+      if (rune.active) { showToast('هذه البلورة تحفظ رنينها بالفعل.'); return; }
+      if (rune.order === level.runeProgress) {
+        rune.active = true; level.runeProgress += 1; audio.rune(level.runeProgress);
+        showToast(`عاد الرنين ${level.runeProgress} من ${level.runes.length}.`);
+        if (level.runeProgress === level.runes.length) showDialogue('صدى الوادي', 'تتصل البلورات بخيط واحد، وتتحرك البوابة في البعيد.');
+      } else {
+        level.runes.forEach((item) => { item.active = false; }); level.runeProgress = 0; audio.danger();
+        showToast('اختفى الرنين برفق. اتبعي العلامات I ثم II ثم III.');
+      }
+      return;
     }
     const lever = level.levers.find((item) => distance(p, item) < 78);
     if (lever) {
@@ -322,13 +380,21 @@
         if (!level.seedMessageShown) { level.seedMessageShown = true; showToast(seed.note); }
       }
     }
+    if (!level.memoryShown && level.seeds.length && level.seeds.every((seed) => seed.collected)) {
+      level.memoryShown = true;
+      showDialogue('ذاكرة سيل', 'ثلاث بذور تضيء معاً: «لا تجمعي النور كي تخبئيه؛ اجمعيه كي يعرف طريقه».');
+    }
     for (const key of level.keys) {
       if (!key.collected && overlap(p, key)) { key.collected = true; audio.key(); updateHud(); showToast('مفتاح زجاجي — صوته يصل إلى البوابة.'); }
     }
-    for (const anchor of level.anchors) {
+    for (const [anchorIndex, anchor] of level.anchors.entries()) {
       if (!anchor.lit && overlap(p, anchor)) {
         anchor.lit = true; level.checkpoint = { x: anchor.x - 5, y: 440 }; audio.tone(330, .38, 'sine', .1, 95);
         showToast('مرسى ضوء — تم حفظ هذه النقطة.');
+        if (!level.storyEvents[anchorIndex]) {
+          level.storyEvents[anchorIndex] = true;
+          showDialogue(anchorIndex === 0 ? 'نورا' : 'صدى الوادي', STORY_BEATS[level.index][anchorIndex]);
+        }
       }
     }
   }
@@ -363,7 +429,15 @@
       box.y = p.y + 3;
     }
     if (p.y > 780) respawn();
-    for (const hazard of level.hazards) if (overlap(p, hazard)) { respawn(); break; }
+    for (const hazard of level.hazards) {
+      if (!overlap(p, hazard) || p.invulnerable > 0) continue;
+      if (save.settings.gentle) {
+        const direction = p.vx >= 0 ? -1 : 1;
+        p.x = clamp(p.x + direction * 74, 0, level.width - p.w); p.vx = direction * 180; p.vy = -280; p.invulnerable = .72;
+        audio.danger(); showToast('رحلة هادئة: أعادك الفانوس خطوةً قبل الخطر.');
+      } else respawn();
+      break;
+    }
     if (level.fog && p.x > level.fog.x && p.x < level.fog.x + level.fog.w && !level.fog.warned) {
       level.fog.warned = true; showToast('الضباب يتراجع عندما تثقين بالفانوس.');
     }
@@ -373,17 +447,21 @@
   function goalDescription(level) {
     const type = level.chapter.type;
     if (type === 'key') return `مفاتيح: ${level.keys.filter((k) => k.collected).length}/${level.keys.length}`;
-    if (type === 'resonance') return `رنين المفاتيح: ${level.keys.filter((k) => k.collected).length}/${level.keys.length}`;
+    if (type === 'resonance') {
+      const keys = `${level.keys.filter((k) => k.collected).length}/${level.keys.length}`;
+      return `مفاتيح ${keys} · بلورات ${level.runeProgress}/${level.runes.length}`;
+    }
     if (type === 'weight') return level.plates[0].active ? 'لوح الضغط مضاء ✓' : 'الصندوق لم يصل إلى لوح الضغط';
     if (type === 'tide') return level.levers[0].used ? 'الجسر مستقر ✓' : 'ابحثي عن رافعة المد';
     return 'اتّبعي شعاع الفانوس إلى البوابة.';
   }
 
   function updateHint() {
-    if (!game.running || game.paused || !game.level) { el.hint.classList.add('is-hidden'); return; }
+    if (!save.settings.guidance || !game.running || game.paused || !game.level) { el.hint.classList.add('is-hidden'); return; }
     const p = game.player; const l = game.level;
     let text = '';
     if (p.carrying) text = 'اضغط <kbd>E</kbd> لإفلات الصندوق';
+    else if (l.runes.some((x) => distance(p, x) < 82 && !x.active)) text = 'اضغط <kbd>E</kbd> لإيقاظ البلورة التالية';
     else if (l.levers.some((x) => distance(p, x) < 78 && !x.used)) text = 'اضغط <kbd>E</kbd> لتدوير الرافعة';
     else if (l.crates.some((x) => distance(p, x) < 78 && !x.carried)) text = 'اضغط <kbd>E</kbd> لحمل صندوق الرنين';
     if (text) { el.hint.innerHTML = text; el.hint.classList.remove('is-hidden'); }
@@ -406,8 +484,16 @@
     game.toastTimer = setTimeout(() => el.toast.classList.add('is-hidden'), duration);
   }
 
+  function showDialogue(speaker, copy, duration = 4300) {
+    clearTimeout(game.dialogueTimer);
+    el.dialogueSpeaker.textContent = speaker; el.dialogueCopy.textContent = copy;
+    el.dialogue.classList.remove('is-hidden');
+    game.dialogueTimer = setTimeout(() => el.dialogue.classList.add('is-hidden'), duration);
+  }
+  function hideDialogue() { clearTimeout(game.dialogueTimer); el.dialogue.classList.add('is-hidden'); }
+
   function hideAllScreens() {
-    [el.title, el.map, el.pause, el.intro, el.ending, el.credits].forEach((node) => node.classList.add('is-hidden'));
+    [el.title, el.map, el.pause, el.settings, el.intro, el.ending, el.credits].forEach((node) => node.classList.add('is-hidden'));
   }
 
   function showIntro(chapter) {
@@ -422,7 +508,7 @@
   function startChapter(index) {
     index = clamp(index, 0, CHAPTERS.length - 1);
     audio.unlock();
-    clearInput(); hideAllScreens();
+    clearInput(); hideAllScreens(); hideDialogue();
     game.level = buildLevel(index); game.player = makePlayer(index); game.camera.x = 0; game.transitioning = false; game.flash = .22;
     game.running = true; game.paused = false;
     save.lastChapter = index; persist();
@@ -433,7 +519,7 @@
 
   function finishChapter() {
     const l = game.level; const index = l.index;
-    game.transitioning = true; game.running = false; el.hud.classList.add('is-hidden'); el.touch.classList.add('is-hidden');
+    game.transitioning = true; game.running = false; hideDialogue(); el.hud.classList.add('is-hidden'); el.touch.classList.add('is-hidden');
     const gained = l.seeds.filter((s) => s.collected).length;
     const before = Number(save.chapterSeedBest[index] || 0);
     if (gained > before) { save.totalSeeds += gained - before; save.chapterSeedBest[index] = gained; }
@@ -473,6 +559,29 @@
     if (game.mapReturn === 'pause' && game.running) el.pause.classList.remove('is-hidden');
     else el.title.classList.remove('is-hidden');
   }
+  function openSettings() {
+    game.settingsReturn = 'title';
+    el.title.classList.add('is-hidden');
+    updateSettingsUI();
+    el.settings.classList.remove('is-hidden');
+  }
+  function closeSettings() {
+    el.settings.classList.add('is-hidden');
+    if (game.settingsReturn === 'title') el.title.classList.remove('is-hidden');
+  }
+  function updateSettingsUI() {
+    document.querySelectorAll('[data-setting-state]').forEach((stateNode) => {
+      const key = stateNode.dataset.settingState;
+      const enabled = !!save.settings[key];
+      stateNode.classList.toggle('on', enabled);
+      stateNode.textContent = enabled ? 'مفعّل' : 'متوقف';
+    });
+  }
+  function toggleSetting(key) {
+    save.settings[key] = !save.settings[key]; persist(); applySettings(); updateSettingsUI();
+    showToast(save.settings[key] ? 'تم تفعيل الخيار.' : 'تم إيقاف الخيار.', 1500);
+  }
+
   function buildMap() {
     el.mapList.innerHTML = '';
     for (let i = 0; i < CHAPTERS.length; i++) {
@@ -564,9 +673,11 @@
   function drawWeather(level) {
     const pal = PALETTES[level.chapter.biome];
     ctx.save();
-    for (let i = 0; i < 54; i++) {
-      const x = ((i * 113 - game.time * (18 + (i % 4) * 8) - game.camera.x * .62) % (VW + 80)) - 40;
-      const y = (hash(i + level.index * 37) * 650 + game.time * (level.chapter.biome === 'canal' ? 34 : 12)) % 690;
+    const weatherCount = save.settings.reducedMotion ? 16 : 54;
+    const weatherTime = save.settings.reducedMotion ? game.time * .18 : game.time;
+    for (let i = 0; i < weatherCount; i++) {
+      const x = ((i * 113 - weatherTime * (18 + (i % 4) * 8) - game.camera.x * .62) % (VW + 80)) - 40;
+      const y = (hash(i + level.index * 37) * 650 + weatherTime * (level.chapter.biome === 'canal' ? 34 : 12)) % 690;
       const alpha = .14 + hash(i * 8) * .18;
       if (level.chapter.biome === 'canal' || level.chapter.biome === 'sea') {
         ctx.strokeStyle = `rgba(212,244,244,${alpha})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 5, y + 16); ctx.stroke();
@@ -584,7 +695,7 @@
     ctx.fillStyle = gradient; ctx.fillRect(p.x, p.y, p.w, p.h);
     ctx.fillStyle = 'rgba(7,23,39,.25)';
     for (let x = p.x + 16; x < p.x + p.w; x += 42) ctx.fillRect(x, p.y + 20 + (x % 3) * 7, 2, Math.min(100, p.h - 15));
-    ctx.strokeStyle = pal.edge; ctx.globalAlpha = .7; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(p.x, p.y + 1); ctx.lineTo(p.x + p.w, p.y + 1); ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = pal.edge; ctx.globalAlpha = save.settings.highContrast ? 1 : .7; ctx.lineWidth = save.settings.highContrast ? 4 : 2; ctx.beginPath(); ctx.moveTo(p.x, p.y + 1); ctx.lineTo(p.x + p.w, p.y + 1); ctx.stroke(); ctx.globalAlpha = 1;
   }
 
   function drawHazard(h, pal) {
@@ -612,6 +723,16 @@
     const bob = Math.sin(game.time * 2.4 + key.x) * 4;
     ctx.save(); ctx.translate(key.x + 11, key.y + 15 + bob); ctx.rotate(game.time * .7);
     ctx.strokeStyle = '#bff5e5'; ctx.lineWidth = 3; ctx.shadowColor = pal.glow; ctx.shadowBlur = 13; ctx.beginPath(); ctx.arc(-3, -5, 6, 0, Math.PI * 2); ctx.moveTo(1, -1); ctx.lineTo(10, 9); ctx.lineTo(7, 12); ctx.moveTo(7, 6); ctx.lineTo(12, 6); ctx.stroke(); ctx.restore();
+  }
+
+  function drawRune(rune, pal) {
+    const bob = save.settings.reducedMotion ? 0 : Math.sin(game.time * 2 + rune.x * .01) * 3;
+    ctx.save(); ctx.translate(rune.x + rune.w / 2, rune.y + rune.h / 2 + bob);
+    ctx.strokeStyle = rune.active ? '#fff2b2' : pal.accent; ctx.lineWidth = rune.active ? 3.5 : 2;
+    ctx.shadowColor = rune.active ? pal.glow : pal.accent; ctx.shadowBlur = rune.active ? 21 : 8;
+    ctx.rotate(game.time * (rune.active ? .12 : .035)); ctx.beginPath(); ctx.moveTo(0, -17); ctx.lineTo(16, 0); ctx.lineTo(0, 17); ctx.lineTo(-16, 0); ctx.closePath(); ctx.stroke();
+    ctx.rotate(-game.time * (rune.active ? .12 : .035)); ctx.fillStyle = rune.active ? pal.glow : '#355c72'; ctx.globalAlpha = rune.active ? .85 : .72; ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1; ctx.fillStyle = '#fff1bc'; ctx.font = 'bold 11px Tahoma'; ctx.textAlign = 'center'; ctx.fillText(['I', 'II', 'III'][rune.order], 0, 4); ctx.font = '15px Tahoma'; ctx.fillStyle = pal.edge; ctx.fillText(rune.symbol, 0, -24); ctx.restore();
   }
 
   function drawCrate(box, pal) {
@@ -698,6 +819,7 @@
     // توصيلات اللغز خلف العناصر
     if (level.plates[0] && level.gates[0]) drawWire(level.plates[0].x + level.plates[0].w / 2, level.gates[0].x, level.plates[0].y, level.plates[0].active, pal);
     if (level.levers[0] && level.gates[0]) drawWire(level.levers[0].x + 20, level.gates[0].x, level.levers[0].y + 35, level.levers[0].used, pal);
+    if (level.runes.length && level.gates[0]) level.runes.forEach((rune) => drawWire(rune.x + rune.w / 2, level.gates[0].x, rune.y + 25, rune.active, pal));
     level.platforms.forEach((platform) => drawPlatform(platform, pal));
     level.bridges.forEach((bridge) => drawBridge(bridge, pal));
     level.moving.forEach((moving) => drawMoving(moving, pal));
@@ -708,6 +830,7 @@
     level.levers.forEach((lever) => drawLever(lever, pal));
     level.seeds.forEach((seed) => drawSeed(seed, pal));
     level.keys.forEach((key) => drawKey(key, pal));
+    level.runes.forEach((rune) => drawRune(rune, pal));
     level.crates.forEach((box) => drawCrate(box, pal));
     level.gates.forEach((gate) => drawGate(gate, pal));
     drawGoal(level.goal, pal); drawPlayer(p, pal);
@@ -724,7 +847,8 @@
     updateMoving(level, dt); updateCrates(level, dt); updatePuzzle(level);
     if (input.actionPressed) tryInteract();
     updatePlayer(level, dt); collectObjects(level); updatePuzzle(level);
-    game.camera.x = lerp(game.camera.x, clamp(game.player.x - VW * .42, 0, level.width - VW), Math.min(1, dt * 4.8));
+    const cameraTarget = clamp(game.player.x - VW * .42, 0, level.width - VW);
+    game.camera.x = save.settings.reducedMotion ? cameraTarget : lerp(game.camera.x, cameraTarget, Math.min(1, dt * 4.8));
     game.flash = Math.max(0, game.flash - dt);
     updateHud(); updateHint(); audio.ambient(game.time, level.chapter.biome);
     input.jumpPressed = false; input.actionPressed = false;
@@ -761,20 +885,26 @@
 
   $('start-btn').addEventListener('click', () => startChapter(save.lastChapter || 0));
   $('map-btn').addEventListener('click', () => openMap('title'));
+  $('settings-btn').addEventListener('click', openSettings);
   document.querySelectorAll('.close-screen').forEach((button) => button.addEventListener('click', closeMap));
+  document.querySelectorAll('.close-settings').forEach((button) => button.addEventListener('click', closeSettings));
+  document.querySelectorAll('[data-setting]').forEach((button) => button.addEventListener('click', () => toggleSetting(button.dataset.setting)));
+  $('settings-sound-btn').addEventListener('click', () => { audio.unlock(); audio.setMuted(!audio.muted); });
   $('pause-btn').addEventListener('click', togglePause);
   $('resume-btn').addEventListener('click', togglePause);
   $('pause-map-btn').addEventListener('click', () => openMap('pause'));
-  $('home-btn').addEventListener('click', () => { game.running = false; game.paused = false; clearInput(); el.pause.classList.add('is-hidden'); el.hud.classList.add('is-hidden'); el.touch.classList.add('is-hidden'); el.title.classList.remove('is-hidden'); });
+  $('home-btn').addEventListener('click', () => { game.running = false; game.paused = false; clearInput(); hideDialogue(); el.pause.classList.add('is-hidden'); el.hud.classList.add('is-hidden'); el.touch.classList.add('is-hidden'); el.title.classList.remove('is-hidden'); });
   $('sound-btn').addEventListener('click', () => { audio.unlock(); audio.setMuted(!audio.muted); });
   $('restore-ending').addEventListener('click', () => setEnding('city'));
   $('release-ending').addEventListener('click', () => setEnding('forest'));
   $('credits-map-btn').addEventListener('click', () => { el.credits.classList.add('is-hidden'); openMap('title'); });
   $('reset-save-btn').addEventListener('click', () => {
-    if (window.confirm('هل تريد إعادة ضبط كل الفصول والبذور المحفوظة؟')) { save = freshSave(); persist(); audio.setMuted(false); buildMap(); showToast('بدأت رحلة جديدة.'); }
+    if (window.confirm('هل تريد إعادة ضبط كل الفصول والبذور المحفوظة؟')) { save = freshSave(); persist(); audio.setMuted(false); applySettings(); updateSettingsUI(); buildMap(); showToast('بدأت رحلة جديدة.'); }
   });
 
+  applySettings();
   audio.setMuted(audio.muted);
+  updateSettingsUI();
   game.level = buildLevel(save.lastChapter || 0);
   game.player = makePlayer(save.lastChapter || 0);
   buildMap(); updateHud();
