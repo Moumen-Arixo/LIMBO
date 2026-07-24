@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#142743" />
+  <meta name="description" content="ظلال الفجر، مغامرة منصات وألغاز أصلية تعمل في المتصفح." />
+  <title>ظلال الفجر | Dawnbound</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="app" aria-label="لعبة ظلال الفجر">
+    <canvas id="game" width="1280" height="720" aria-label="مساحة اللعبة"></canvas>
+
+    <section id="hud" class="hud is-hidden" aria-live="polite">
+      <div class="brand-mini"><span class="spark"></span> ظلال الفجر</div>
+      <div class="chapter-card">
+        <span id="hud-act" class="eyebrow">الفصل الأول</span>
+        <strong id="hud-chapter">شرارة تحت السرخس</strong>
+        <span id="hud-objective">أشعل طريقك واجمع بذور الضوء.</span>
+      </div>
+      <div class="hud-actions">
+        <div class="seed-counter" title="بذور الضوء"><span>✦</span><b id="seed-count">0</b><i>/</i><em id="seed-total">3</em></div>
+        <button id="sound-btn" class="icon-btn" type="button" aria-label="كتم الصوت" title="الصوت">♫</button>
+        <button id="pause-btn" class="icon-btn" type="button" aria-label="إيقاف مؤقت" title="إيقاف مؤقت">Ⅱ</button>
+      </div>
+      <div id="interaction-hint" class="interaction-hint is-hidden">اضغط <kbd>E</kbd> للتفاعل</div>
+    </section>
+
+    <div id="toast" class="toast is-hidden" role="status"></div>
+
+    <section id="title-screen" class="screen title-screen">
+      <div class="title-mist mist-a"></div><div class="title-mist mist-b"></div>
+      <div class="title-content panelless">
+        <p class="eyebrow title-kicker">مغامرة أصلية من منصات وألغاز</p>
+        <h1>ظلال <span>الفجر</span></h1>
+        <p class="latin-title">DAWNBOUND</p>
+        <p class="lead">أعيدي النور إلى خمس منارات، واتّبعي أثراً كهرمانياً عبر وادٍ يغيّر لونه كلما تذكّر نفسه.</p>
+        <div class="title-buttons">
+          <button id="start-btn" class="button primary" type="button">ابدأ الرحلة <span>←</span></button>
+          <button id="map-btn" class="button ghost" type="button">خريطة الحملة</button>
+        </div>
+        <p class="control-summary">تحرّك <b>← →</b> أو <b>A D</b> &nbsp; · &nbsp; اقفز <b>Space</b> &nbsp; · &nbsp; تفاعل <b>E</b></p>
+      </div>
+      <div class="title-footer">نسخة متصفح مستقلة · صوت مولّد محلياً · حفظ تلقائي</div>
+    </section>
+
+    <section id="map-screen" class="screen is-hidden" aria-label="خريطة الحملة">
+      <div class="panel map-panel">
+        <header class="screen-header">
+          <div><p class="eyebrow">خمس منارات · 25 فصلاً</p><h2>خريطة الوادي</h2></div>
+          <button class="icon-btn close-screen" type="button" data-close="map-screen" aria-label="إغلاق">×</button>
+        </header>
+        <p class="map-intro">كل عقدة هي رحلة مستقلة فيها مرسى وحل لغز وبذور ضوء. أكملي الفصول لفتح المسار التالي.</p>
+        <div id="chapter-map" class="chapter-map" role="list" aria-label="فصول الحملة"></div>
+        <footer class="map-footer"><span id="progress-label">0 من 25 فصل مكتمل</span><button id="reset-save-btn" class="text-button" type="button">إعادة ضبط الحفظ</button></footer>
+      </div>
+    </section>
+
+    <section id="pause-screen" class="screen is-hidden" aria-label="قائمة الإيقاف">
+      <div class="panel compact-panel">
+        <p class="eyebrow">الرحلة متوقفة</p><h2>خذي نفساً</h2>
+        <p id="pause-detail">سيُحفظ تقدمك عند كل منارة.</p>
+        <button id="resume-btn" class="button primary" type="button">متابعة الرحلة</button>
+        <button id="pause-map-btn" class="button ghost" type="button">خريطة الحملة</button>
+        <button id="home-btn" class="button subtle" type="button">العودة للبداية</button>
+      </div>
+    </section>
+
+    <section id="chapter-card-screen" class="screen is-hidden chapter-card-screen" aria-live="polite">
+      <div class="chapter-intro">
+        <p id="intro-act" class="eyebrow">الفصل الأول</p>
+        <h2 id="intro-title">شرارة تحت السرخس</h2>
+        <p id="intro-copy">حين يصغي الوادي للفانوس، تفتح الجذور طريقاً صغيراً.</p>
+        <div class="intro-line"></div>
+      </div>
+    </section>
+
+    <section id="ending-screen" class="screen is-hidden" aria-label="نهاية الرحلة">
+      <div class="panel ending-panel">
+        <p class="eyebrow">المنارة الخامسة</p>
+        <h2>صار للظلّ اسمٌ آخر</h2>
+        <p>تجمع نورا الفجر في كفّها. لم يكن الظل عدواً؛ كان الطريق الذي نسي أن يُضاء.</p>
+        <div class="ending-choices">
+          <button id="restore-ending" class="button primary" type="button">أعيدي النور إلى المدينة</button>
+          <button id="release-ending" class="button ghost" type="button">أطلقيه في الغابة</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="credits-screen" class="screen is-hidden" aria-label="الخاتمة">
+      <div class="panel compact-panel credits-panel">
+        <p class="eyebrow">شكرًا لأنك مشيت في الضوء</p>
+        <h2 id="ending-title">فجر المدينة</h2>
+        <p id="ending-copy"></p>
+        <div class="credits-rule"></div>
+        <p class="credits-small">ظلال الفجر — تجربة أصلية مرسومة وموسيقية برمجياً<br>استكشف الخريطة لإعادة أي فصل وجمع مزيد من البذور.</p>
+        <button id="credits-map-btn" class="button primary" type="button">إلى خريطة الحملة</button>
+      </div>
+    </section>
+
+    <div id="touch-controls" class="touch-controls is-hidden" aria-label="أزرار اللمس">
+      <div class="touch-cluster movement"><button class="touch-btn" data-key="left" type="button" aria-label="يسار">‹</button><button class="touch-btn" data-key="right" type="button" aria-label="يمين">›</button></div>
+      <div class="touch-cluster actions"><button class="touch-btn action" data-key="action" type="button" aria-label="تفاعل">E</button><button class="touch-btn jump" data-key="jump" type="button" aria-label="قفز">↑</button></div>
+    </div>
+  </main>
+  <noscript>تحتاج هذه اللعبة إلى JavaScript كي تعمل.</noscript>
+  <script src="game.js"></script>
+</body>
+</html>
